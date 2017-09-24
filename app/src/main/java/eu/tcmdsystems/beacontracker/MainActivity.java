@@ -13,9 +13,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity implements BeaconResultReceiver.Receiver {
@@ -44,8 +45,7 @@ public class MainActivity extends AppCompatActivity implements BeaconResultRecei
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+               startBeaconScanner();
             }
         });
 
@@ -59,8 +59,9 @@ public class MainActivity extends AppCompatActivity implements BeaconResultRecei
 
         mReceiver = new BeaconResultReceiver(new Handler());
         mReceiver.setReceiver(this);
-
-        Intent intent = new Intent(Intent.ACTION_SYNC, null, this, ScannerIntentService.class);
+        // Intent(String action, Uri uri, Context packageContext, Class<?> cls)
+        //Create an intent for a specific component with a specified action and data.
+        Intent intent = new Intent(Constants.BTLE_SCAN, null, this, ScannerIntentService.class);
         intent.putExtra("receiver", mReceiver);
         startService(intent);
     }
@@ -149,5 +150,7 @@ public class MainActivity extends AppCompatActivity implements BeaconResultRecei
     @Override
     public void onReceiveResult(int resultCode, Bundle resultData) {
         //
+
+        Log.d(TAG, "onReceiveResult: ");
     }
 }

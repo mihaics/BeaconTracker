@@ -7,7 +7,7 @@ class Constants {
 
     private Constants() {
     }
-
+    static final String BTLE_SCAN = "eu.tcmdsystems.beacontracker.action.SCAN";
     /**
      * Eddystone-UID frame type value.
      */
