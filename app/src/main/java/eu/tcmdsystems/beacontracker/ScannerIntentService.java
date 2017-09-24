@@ -3,6 +3,7 @@ package eu.tcmdsystems.beacontracker;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.os.ResultReceiver;
 import android.util.Log;
 
 /**
@@ -33,8 +34,8 @@ public class ScannerIntentService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_BTLE.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_RECEIVER);
-                handleActionScan(param1);
+                final ResultReceiver receiver = (ResultReceiver) intent.getExtras().get(EXTRA_RECEIVER);
+                handleActionScan(receiver);
 
             }
         }
@@ -44,9 +45,18 @@ public class ScannerIntentService extends IntentService {
      * Handle action in the provided background thread with the provided
      * parameters.
      */
-    private void handleActionScan(String param1) {
+    private void handleActionScan(ResultReceiver receiver) {
         // TODO: Handle action Foo
-        Log.d(TAG, "handleActionScan: ");
+        Log.d(TAG, "handleActionScan: test receiver ");
+
+        if (receiver == null) {
+            return;
+        }
+
+        Log.d(TAG, "handleActionScan: receiver send 0 ");
+            receiver.send(0, null);
+            return;
+
     }
 
 

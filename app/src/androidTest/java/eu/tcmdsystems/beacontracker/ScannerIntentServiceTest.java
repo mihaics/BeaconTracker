@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.ResultReceiver;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.ServiceTestCase;
@@ -27,6 +26,7 @@ public class ScannerIntentServiceTest extends ServiceTestCase<ScannerIntentServi
 
 
     private static final String TAG = "IntentServiceTest";
+    private static final String EXTRA_RECEIVER = "eu.tcmdsystems.beacontracker.extra.RECEIVER";
 
     public ScannerIntentServiceTest() {
         super(ScannerIntentService.class);
@@ -55,13 +55,15 @@ public class ScannerIntentServiceTest extends ServiceTestCase<ScannerIntentServi
         final CountDownLatch latch = new CountDownLatch(1);
 
 
-        ResultReceiver receiver = new ResultReceiver(new Handler()) {
+        BeaconResultReceiver receiver = new BeaconResultReceiver(new Handler()) {
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 latch.countDown();
+                Log.d(TAG, "onReceiveResult: resultcode "+resultCode);
                 assertEquals(resultCode, 0);
+                Log.d(TAG, "onReceiveResult: resultdata");
                 assertNull(resultData);
-                fail();
+               // fail();
                 Looper.myLooper().quit();
 
             }
@@ -70,7 +72,7 @@ public class ScannerIntentServiceTest extends ServiceTestCase<ScannerIntentServi
 
             Intent intent = new Intent("eu.tcmdsystems.beacontracker.action.SCAN", null, appContext, ScannerIntentService.class);
 
-            intent.putExtra("receiver", receiver);
+            intent.putExtra(EXTRA_RECEIVER, receiver);
             appContext.startService(intent);
 
             Looper.loop();
