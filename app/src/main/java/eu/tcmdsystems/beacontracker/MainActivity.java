@@ -7,10 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,11 +18,11 @@ import android.view.View;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity implements BeaconResultReceiver.Receiver {
-    private static final String TAG = MainActivity.class.getName();
 
+    private static final String TAG = MainActivity.class.getName();
     private static final int PERMISSION_REQUEST_LOCATION = 1;
 
-    private BeaconResultReceiver mReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements BeaconResultRecei
 
 
         //beacon list view
+        //pass the object or make it global?
+        //este initializat, dar cum comunicam cu el?
         ListView beaconlistview = (ListView) findViewById(R.id.beacon_list);
 
 
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements BeaconResultRecei
     }
 
     private void startBeaconScanner() {
-
+/*
         mReceiver = new BeaconResultReceiver(new Handler());
         mReceiver.setReceiver(this);
         // Intent(String action, Uri uri, Context packageContext, Class<?> cls)
@@ -64,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements BeaconResultRecei
         Intent intent = new Intent(Constants.BTLE_SCAN, null, this, ScannerIntentService.class);
         intent.putExtra("receiver", mReceiver);
         startService(intent);
+        */
+        Intent intent = new Intent(this, BeaconDetect.class);
+        startActivity(intent);
+
     }
 
     private void checkPermissions() {
