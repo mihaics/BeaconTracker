@@ -2,6 +2,11 @@ package eu.tcmdsystems.beacontracker;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.bluetooth.BluetoothAdapter;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,7 +22,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-public class MainActivity extends AppCompatActivity implements BeaconResultReceiver.Receiver {
+import eu.tcmdsystems.beacontracker.service.ScannerJobService;
+
+public class MainActivity extends AppCompatActivity  {
 
     private static final String TAG = MainActivity.class.getName();
     private static final int PERMISSION_REQUEST_LOCATION = 1;
@@ -45,28 +52,29 @@ public class MainActivity extends AppCompatActivity implements BeaconResultRecei
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               startBeaconScanner();
+               //startBeaconScanner();
             }
         });
 
 
         checkPermissions();
-        startBeaconScanner();
+        enableBluetooth();
+        //schedule the job service
+        scheduleBeaconScanner(this);
         
     }
 
-    private void startBeaconScanner() {
-/*
-        mReceiver = new BeaconResultReceiver(new Handler());
-        mReceiver.setReceiver(this);
-        // Intent(String action, Uri uri, Context packageContext, Class<?> cls)
-        //Create an intent for a specific component with a specified action and data.
-        Intent intent = new Intent(Constants.BTLE_SCAN, null, this, ScannerIntentService.class);
-        intent.putExtra("receiver", mReceiver);
-        startService(intent);
-        */
-        Intent intent = new Intent(this, BeaconDetect.class);
-        startActivity(intent);
+
+    private void scheduleBeaconScanner(Context context) {
+
+        Log.d(TAG, "scheduleBeaconScanner: ");
+        ComponentName component = new ComponentName(context, ScannerJobService.class);
+        JobInfo.Builder builder = new JobInfo.Builder(Constants.JOB_ID, component)
+                .setPeriodic(Constants.ONE_MIN)
+                .setPersisted(true);
+
+        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(builder.build());
 
     }
 
@@ -151,10 +159,10 @@ public class MainActivity extends AppCompatActivity implements BeaconResultRecei
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onReceiveResult(int resultCode, Bundle resultData) {
-        //
-
-        Log.d(TAG, "onReceiveResult: ");
+    public void enableBluetooth() {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(bluetoothAdapter != null) {
+            bluetoothAdapter.enable();
+        }
     }
 }

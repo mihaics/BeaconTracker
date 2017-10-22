@@ -42,4 +42,8 @@ class Constants {
      */
     static final int MAX_EXPECTED_TX_POWER = 20;
 
+   static final int JOB_ID = 1;
+    static final int ONE_MIN = 60 * 1000;
+    static final int FIVE_MIN = 5 * 60 * 1000;
+
 }
